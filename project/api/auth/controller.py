@@ -4,7 +4,7 @@ from typing import Dict, Tuple
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt
 
-from .service import authenticate_user, encode_auth_token
+from .service import authenticate_user, encode_auth_token, encode_refresh_token
 from .schema import verify_user_schema
 from project.lib import (
     BadRequest,
@@ -29,6 +29,8 @@ def login_user() -> Tuple[Dict[str, str], int]:
         auth_user = authenticate_user(identity=u["username"], password=u["hashed_password"])
         resp = {
             "access_token": encode_auth_token(auth_user.username),
+            "refresh_token": encode_refresh_token(auth_user.username),
+            "role": auth_user.user_type
         }
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)

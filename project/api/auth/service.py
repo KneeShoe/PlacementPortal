@@ -4,7 +4,7 @@ from flask import current_app
 
 from project.lib import BadRequest, ServerError, ph
 from ..users import authenticate, User
-from flask_jwt_extended import create_access_token, get_jti
+from flask_jwt_extended import create_access_token, get_jti, create_refresh_token
 
 
 def authenticate_user(identity: str, password: str) -> Optional[User]:
@@ -30,5 +30,18 @@ def encode_auth_token(username: str) -> str:
             expires_delta=current_app.config.get("JWT_ACCESS_TOKEN_EXPIRES"),
         )
         return acc_tok
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+
+def encode_refresh_token(username: str) -> str:
+    """Generates an Refresh token with the constants configured
+    :return token
+    """
+    try:
+        ref_tok = create_refresh_token(
+            identity=username,
+            expires_delta=current_app.config.get("JWT_REFRESH_TOKEN_EXPIRES"),
+        )
+        return ref_tok
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
