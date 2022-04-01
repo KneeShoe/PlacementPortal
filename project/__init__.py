@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from .blueprints_registry import register_blueprints
 from .extensions import db, jwt, migrate
+from flask_cors import CORS
 
 
 def create_app(script_info=None):
@@ -11,6 +12,7 @@ def create_app(script_info=None):
     """
 
     app = Flask(__name__)
+    CORS(app)
 
     app_settings = os.environ.get("APP_SETTINGS")
     app.config.from_object(app_settings)
