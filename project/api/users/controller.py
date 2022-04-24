@@ -27,4 +27,4 @@ def get_user_details():
 
 
 
-users_blueprint.add_url_rule("/getdetails", "getdetails", get_user_details, methods=["GET"])
+users_blueprint.add_url_rule("/getDetails", "getdetails", get_user_details, methods=["GET"])
