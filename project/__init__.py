@@ -44,9 +44,8 @@ def extensions(app: Flask):
 
 
 def register_models():
-    """
-    Example:
-    from project.api.activity import Activity
-    """
+
+    from project.api.users import User, Student
+    from project.api.jobs import Job
 
     return None

@@ -3,4 +3,4 @@ from .service import (
     find_by_identity,
 )
 from .controller import users_blueprint
-from .model import User
+from .model import User, Student

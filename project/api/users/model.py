@@ -31,15 +31,18 @@ class Student(db.Model):
     resume1 = db.Column(db.String(256), nullable=True)
     resume2 = db.Column(db.String(256), nullable=True)
     placed_slab = db.Column(db.INT, nullable=True)
+    sem = db.Column(db.String(256), nullable=True)
+    sec = db.Column(db.String(256), nullable=True)
+    cgpa = db.Column(db.String(256), nullable=True)
 
     @classmethod
     def get_student_details(cls, usn=None):
         student_details = db.session.execute(
             text(
                 """
-                select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, u.first_name, u.last_name, u.username, 
-                u.email_id, u.phone_number from student s inner join users u on u.user_id = s.user_id 
-                where u.username=:usn 
+                select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, s.sem, s.sec, s.cgpa, u.first_name, 
+                u.last_name, u.username, u.email_id, u.phone_number from student s inner join users u on 
+                u.user_id = s.user_id where u.username=:usn 
                 """
             ), {"usn": usn}
         )
