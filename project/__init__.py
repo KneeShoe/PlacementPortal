@@ -16,7 +16,6 @@ def create_app(script_info=None):
 
     app_settings = os.environ.get("APP_SETTINGS")
     app.config.from_object(app_settings)
-    print(app.config)
     register_models()
     extensions(app)
     register_blueprints(app)

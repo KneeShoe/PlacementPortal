@@ -12,4 +12,6 @@ def register_blueprints(app: Flask):
     app.register_blueprint(ping_blueprint, url_prefix="/api")
     from project.api.auth import auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix="/api")
+    from project.api.users import users_blueprint
+    app.register_blueprint(users_blueprint, url_prefix="/api/user")
     return None

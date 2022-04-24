@@ -1,5 +1,5 @@
 from typing import Optional
-from .model import User
+from .model import User, Student
 from project.lib import BadRequest, ph
 from project.extensions import db
 from argon2.exceptions import VerifyMismatchError
@@ -47,3 +47,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         return ph.verify(hashed_password, plain_password)
     except VerifyMismatchError:
         return False
+
+def get_student_profile(usn: str):
+    """
+    Get the profile of a student
+    :param usn: USN(id) of student
+    :return: Details for profile
+    """
+    return Student.get_student_details(usn=usn)

@@ -9,6 +9,50 @@ from project.extensions import db
 from project.lib import ResourceMixin, ph
 
 
+class Student(db.Model):
+    """
+    Model related to the student detials
+    :param UUID 'user_id': Unique Identifier for the user set as primary key
+    :param string 'dept':
+    :param string 'dob':
+    :param string 'resume1':
+    :param string 'resume2':
+    :param string 'placedSlab':
+    """
+
+    __tablename__ = "student"
+    user_id = db.Column(
+        UUID(as_uuid=True),
+        db.ForeignKey("users.user_id"),
+        primary_key=True,
+    )
+    dept = db.Column(db.String(120), nullable=False)
+    dob = db.Column(db.Date, nullable=False)
+    resume1 = db.Column(db.String(256), nullable=True)
+    resume2 = db.Column(db.String(256), nullable=True)
+    placed_slab = db.Column(db.INT, nullable=True)
+
+    @classmethod
+    def get_student_details(cls, usn=None):
+        student_details = db.session.execute(
+            text(
+                """
+                select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, u.first_name, u.last_name, u.username, 
+                u.email_id, u.phone_number from student s inner join users u on u.user_id = s.user_id 
+                where u.username=:usn 
+                """
+            ), {"usn": usn}
+        )
+        resp = {}
+        column = student_details.fetchone()
+        i = 0
+        for d in student_details.cursor.description:
+            resp[d[0]] = column[i]
+            i += 1
+        print(resp)
+        return resp
+
+
 class User(db.Model):
     """
     Model related to the user details
@@ -36,7 +80,8 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     hashed_password = db.Column(db.String(255), nullable=False)
     email_id = db.Column(db.String(120), unique=True, nullable=False)
-    user_type = db.Column(db.String(64), default=None)
+    user_type = db.Column(db.String(15), default=None)
+    phone_number = db.Column(db.String(15), default=None)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
