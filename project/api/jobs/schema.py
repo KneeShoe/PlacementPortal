@@ -1,11 +1,20 @@
 from marshmallow import Schema, fields
 
 
-class VerifyUser(Schema):
-    """Schema for the end user verification"""
+class JobSchema(Schema):
+    job_id = fields.UUID()
+    job_type = fields.String()
+    company_name = fields.String()
+    dept_allowed = fields.String()
+    ctc = fields.Integer()
+    location = fields.String()
+    comp_address = fields.String()
+    internship = fields.Boolean()
+    job_desc = fields.String()
+    placed_slab = fields.Integer()
+    start_date = fields.Date()
+    end_date = fields.Date()
+    extras = fields.String()
 
-    username = fields.String(required=True)
-    hashed_password = fields.String(required=True, data_key="password")
 
-
-verify_user_schema = VerifyUser()
+jobschema = JobSchema(many=True)

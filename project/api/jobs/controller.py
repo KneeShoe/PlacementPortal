@@ -3,9 +3,9 @@ from typing import Dict, Tuple
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt
+from .service import getActiveJobs
+from .schema import jobschema
 
-from .service import authenticate_user, encode_auth_token, encode_refresh_token
-from .schema import verify_user_schema
 from project.lib import (
     BadRequest,
     ServerError,
@@ -19,6 +19,10 @@ jobs_blueprint = Blueprint(
 )
 
 
+def active_jobs():
+    jobs = getActiveJobs()
+    resp = jobschema.dump(jobs)
+    return {"active_jobs": resp}
 
 
-# jobs_blueprint.add_url_rule("/login", "login", login_user, methods=["POST"])
+jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
