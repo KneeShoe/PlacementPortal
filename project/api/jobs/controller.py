@@ -5,6 +5,7 @@ from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt
 from .service import getActiveJobs
 from .schema import jobschema
+from datetime import datetime
 
 from project.lib import (
     BadRequest,
@@ -22,6 +23,9 @@ jobs_blueprint = Blueprint(
 def active_jobs():
     jobs = getActiveJobs()
     resp = jobschema.dump(jobs)
+    for job in resp:
+        job['remaining_days'] = (datetime.strptime(job['end_date'], '%Y-%m-%d') - datetime.now()).days
+        job.pop('end_date')
     return {"active_jobs": resp}
 
 

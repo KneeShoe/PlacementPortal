@@ -15,6 +15,7 @@ class Job(db.Model):
         UUID(as_uuid=True),
         primary_key=True,
     )
+    job_role = db.Column(db.String(120))
     job_type = db.Column(db.String(120), nullable=False)
     company_name = db.Column(db.String(256), nullable=True)
     dept_allowed = db.Column(db.String(256), nullable=True)

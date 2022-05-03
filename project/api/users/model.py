@@ -41,7 +41,7 @@ class Student(db.Model):
             text(
                 """
                 select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, s.sem, s.sec, s.cgpa, u.first_name, 
-                u.last_name, u.username, u.email_id, u.phone_number from student s inner join users u on 
+                u.last_name, u.username, u.email_id, u.phone_number, u.profile_picture from student s inner join users u on 
                 u.user_id = s.user_id where u.username=:usn 
                 """
             ), {"usn": usn}
@@ -85,6 +85,7 @@ class User(db.Model):
     email_id = db.Column(db.String(120), unique=True, nullable=False)
     user_type = db.Column(db.String(15), default=None)
     phone_number = db.Column(db.String(15), default=None)
+    profile_picture = db.Column(db.String(255))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
