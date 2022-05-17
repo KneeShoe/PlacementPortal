@@ -4,7 +4,8 @@ from typing import Optional
 from flask import current_app
 from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
-from .model import Job
+from .model import Job, Applications
+from project.extensions import db
 
 
 def getActiveJobs():
@@ -26,3 +27,12 @@ def getJobDetails(job_id):
         return jobs
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
+
+def create_application(resume, job_id,s_id):
+    """Creates job application"""
+    try:
+        db.session.add(Applications(s_id=s_id, job_id=job_id, resume=resume, status="Applied", date=datetime.now()))
+        db.session.commit()
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+

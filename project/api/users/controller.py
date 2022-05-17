@@ -26,5 +26,4 @@ def get_user_details():
     return resp, 200
 
 
-
 users_blueprint.add_url_rule("/getDetails", "getdetails", get_user_details, methods=["GET"])
