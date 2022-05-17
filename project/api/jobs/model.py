@@ -27,6 +27,7 @@ class Job(db.Model):
     placed_slab = db.Column(db.INT, nullable=True)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
+    jd_link = db.Column(db.String(256), nullable=True)
     extras = db.Column(db.String(256), nullable=True)
 
     def as_dict(self):

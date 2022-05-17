@@ -3,8 +3,8 @@ from typing import Dict, Tuple
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt
-from .service import getActiveJobs
-from .schema import jobschema
+from .service import getActiveJobs, getJobDetails
+from .schema import jobschema, jobdescriptionschema
 from datetime import datetime
 
 from project.lib import (
@@ -28,5 +28,11 @@ def active_jobs():
         job.pop('end_date')
     return {"active_jobs": resp}
 
+def job_description():
+    data = jobdescriptionschema.load(request.get_json(force=True))
+    details = getJobDetails(data['job_id'])
+    resp = jobschema.dump(details)
+    return resp[0]
 
 jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
+jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["POST"])

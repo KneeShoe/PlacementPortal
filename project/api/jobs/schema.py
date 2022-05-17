@@ -14,7 +14,15 @@ class JobSchema(Schema):
     placed_slab = fields.Integer()
     start_date = fields.Date()
     end_date = fields.Date()
+    jd_link = fields.String()
     extras = fields.String()
 
 
+class JobDescription(Schema):
+    job_id = fields.UUID()
+
+
+
+
+jobdescriptionschema = JobDescription()
 jobschema = JobSchema(many=True)
