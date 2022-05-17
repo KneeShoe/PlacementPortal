@@ -68,5 +68,5 @@ def apply_job():
 
 
 jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
-jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["POST"])
+jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["GET"])
 jobs_blueprint.add_url_rule("/apply", "Apply", apply_job, methods=["POST"])

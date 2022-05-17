@@ -4,6 +4,7 @@ from marshmallow import Schema, fields
 class JobSchema(Schema):
     job_id = fields.UUID()
     job_type = fields.String()
+    job_role = fields.String()
     company_name = fields.String()
     dept_allowed = fields.String()
     ctc = fields.Integer()
