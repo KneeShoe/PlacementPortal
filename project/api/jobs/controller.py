@@ -3,8 +3,8 @@ from typing import Dict, Tuple
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt, jwt_required
-from .service import getActiveJobs, getJobDetails, create_application
-from .schema import jobschema, jobdescriptionschema
+from .service import getActiveJobs, getJobDetails, create_application, get_user_applications
+from .schema import jobschema, jobdescriptionschema, applicationschema
 from datetime import datetime
 
 from project.lib import (
@@ -44,7 +44,7 @@ def job_description():
         resp = jobschema.dump(details)
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
-    except BadRequest as err:
+    except KeyError as err:
         raise BadRequest(message=err.message, status=err.status)
     except Exception as e:
         logging.exception(msg=e)
@@ -59,7 +59,7 @@ def apply_job():
         create_application(resume=data['resume_link'], job_id=data['job_id'], s_id=get_jwt_identity())
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
-    except BadRequest as err:
+    except KeyError as err:
         raise BadRequest(message=err.message, status=err.status)
     except Exception as e:
         logging.exception(msg=e)
@@ -67,6 +67,22 @@ def apply_job():
     return "Application created", 200
 
 
+@jwt_required()
+def get_applications():
+    try:
+        applications = get_user_applications(get_jwt_identity())
+        resp = applicationschema.dump(applications)
+    except ServerError as err:
+        raise ServerError(message=err.message, status=err.status)
+    except KeyError as err:
+        raise BadRequest(message=err.message, status=err.status)
+    except Exception as e:
+        logging.exception(msg=e)
+        raise ServerError("It ain't you, it is me", status=500)
+    return {"applications": resp}
+
+
 jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
 jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["POST"])
 jobs_blueprint.add_url_rule("/apply", "Apply", apply_job, methods=["POST"])
+jobs_blueprint.add_url_rule("/getApplications", "Applications", get_applications, methods=["GET"])

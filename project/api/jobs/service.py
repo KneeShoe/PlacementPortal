@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
 from .model import Job, Applications
 from project.extensions import db
+from sqlalchemy import select
 
 
 def getActiveJobs():
@@ -38,3 +39,16 @@ def create_application(resume, job_id, s_id):
         db.session.commit()
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
+
+
+def get_user_applications(identity):
+    """Get applications for a user"""
+    try:
+        data = db.session.query(Applications, Job, ).with_entities(Applications.date, Applications.status,
+                                                                   Job.company_name, Job.job_type, Job.job_role, Job.ctc
+                                                                   ).filter(Applications.s_id == identity
+                                                                            ).filter(Applications.job_id == Job.job_id
+                                                                                     ).all()
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return data

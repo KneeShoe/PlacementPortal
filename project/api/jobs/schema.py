@@ -23,7 +23,15 @@ class JobDescription(Schema):
     job_id = fields.UUID()
 
 
+class Applications(Schema):
+    job_type = fields.String()
+    job_role = fields.String()
+    company_name = fields.String()
+    ctc = fields.Integer()
+    date = fields.Date()
+    status = fields.String()
 
 
+applicationschema = Applications(many=True)
 jobdescriptionschema = JobDescription()
 jobschema = JobSchema(many=True)
