@@ -32,6 +32,20 @@ def getJobDetails(job_id):
         raise ServerError("It is not You, It is me", status=500)
 
 
+def canApply(job_id, identity):
+    """Check if a user already has applied to the job"""
+    try:
+        resp = True
+        application: Applications = Applications.query.with_entities(Applications.app_id).filter(Applications.s_id == identity).filter(
+            Applications.job_id == job_id).one()
+        if application:
+            resp = False
+        return resp
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+
+
+
 def create_application(resume, job_id, s_id):
     """Creates job application"""
     try:

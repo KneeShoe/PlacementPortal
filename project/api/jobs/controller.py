@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt, jwt_required
-from .service import getActiveJobs, getJobDetails, create_application, get_user_applications
+from .service import getActiveJobs, getJobDetails, create_application, get_user_applications, canApply
 from .schema import jobschema, jobdescriptionschema, applicationschema
 from datetime import datetime
 
@@ -37,11 +37,13 @@ def active_jobs():
     return {"active_jobs": resp}, 200
 
 
+@jwt_required()
 def job_description():
     try:
         data = jobdescriptionschema.load(request.get_json(force=True))
         details = getJobDetails(data['job_id'])
-        resp = jobschema.dump(details)
+        resp = jobschema.dump(details)[0]
+        resp["can_apply"] = canApply(data['job_id'], get_jwt_identity())
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except KeyError as err:
@@ -49,7 +51,7 @@ def job_description():
     except Exception as e:
         logging.exception(msg=e)
         raise ServerError("It ain't you, it is me", status=500)
-    return resp[0], 200
+    return resp, 200
 
 
 @jwt_required()
