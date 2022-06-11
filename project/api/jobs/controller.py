@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt, jwt_required
-from .service import getActiveJobs, getJobDetails, create_application, get_user_applications, canApply
+from .service import getActiveJobs, getJobDetails, create_application, get_user_applications, canApply, add_job_details
 from .schema import jobschema, jobdescriptionschema, applicationschema
 from datetime import datetime
 
@@ -84,7 +84,22 @@ def get_applications():
     return {"applications": resp}
 
 
+def create_job():
+    try:
+        data = request.get_json(force=True)
+        add_job_details(data)
+    except ServerError as err:
+        raise ServerError(message=err.message, status=err.status)
+    except KeyError as err:
+        raise BadRequest(message=err.message, status=err.status)
+    except Exception as e:
+        logging.exception(msg=e)
+        raise ServerError("It ain't you, it is me", status=500)
+    return "New job created", 200
+
+
 jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
 jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["POST"])
 jobs_blueprint.add_url_rule("/apply", "Apply", apply_job, methods=["POST"])
 jobs_blueprint.add_url_rule("/getApplications", "Applications", get_applications, methods=["GET"])
+jobs_blueprint.add_url_rule("/createJob", "createJob", create_job, methods=["POST"])

@@ -36,14 +36,14 @@ def canApply(job_id, identity):
     """Check if a user already has applied to the job"""
     try:
         resp = True
-        application: Applications = Applications.query.with_entities(Applications.app_id).filter(Applications.s_id == identity).filter(
+        application: Applications = Applications.query.with_entities(Applications.app_id).filter(
+            Applications.s_id == identity).filter(
             Applications.job_id == job_id).one()
         if application:
             resp = False
         return resp
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
-
 
 
 def create_application(resume, job_id, s_id):
@@ -63,6 +63,19 @@ def get_user_applications(identity):
                                                                    ).filter(Applications.s_id == identity
                                                                             ).filter(Applications.job_id == Job.job_id
                                                                                      ).all()
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return data
+
+
+def add_job_details(data):
+    """Create a new job"""
+    try:
+        vals = {}
+        for key, value in data:
+            vals[key] = value
+        ins = Job.insert().values(vals)
+        db.engine.execute(ins)
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
     return data

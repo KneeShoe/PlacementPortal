@@ -34,13 +34,16 @@ class Student(db.Model):
     sem = db.Column(db.String(256), nullable=True)
     sec = db.Column(db.String(256), nullable=True)
     cgpa = db.Column(db.String(256), nullable=True)
+    slab1 = db.Column(db.String(256), nullable=True)
+    slab2 = db.Column(db.String(256), nullable=True)
+    slab3 = db.Column(db.String(256), nullable=True)
 
     @classmethod
     def get_student_details(cls, usn=None):
         student_details = db.session.execute(
             text(
                 """
-                select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, s.sem, s.sec, s.cgpa, u.first_name, 
+                select s.dept, s.dob, s.resume1, s.resume2, s.placed_slab, s.sem, s.sec, s.cgpa, u.first_name, s.slab1, s.slab2, s.slab3
                 u.last_name, u.username, u.email_id, u.phone_number, u.profile_picture from student s inner join users u on 
                 u.user_id = s.user_id where u.username=:usn 
                 """
