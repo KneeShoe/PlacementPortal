@@ -17,8 +17,9 @@ from ... import db
 def get_blog_details():
     """Gets all blogs"""
     blogs: Blog = Blog.query.all()
-    resp = blog_schema.dump(blogs)
-    return {"blogs": resp}
+    bloglist = blog_schema.dump(blogs)
+    bloglist.reverse()
+    return {"blogs": bloglist}
 
 
 def create_new_blog(data, identity):

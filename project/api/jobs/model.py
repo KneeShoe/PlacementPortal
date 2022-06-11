@@ -42,11 +42,11 @@ class Applications(db.Model):
     )
     s_id = db.Column(
         db.String(80),
-        db.ForeignKey("users.username")
+        db.ForeignKey("users.username", ondelete="CASCADE")
     )
     job_id = db.Column(
         UUID(as_uuid=True),
-        db.ForeignKey("jobs.job_id"),
+        db.ForeignKey("jobs.job_id", ondelete="CASCADE"),
     )
     resume = db.Column(db.String(256))
     date = db.Column(db.Date)

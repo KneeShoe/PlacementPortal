@@ -7,7 +7,21 @@ from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
 from .model import Job, Applications
 from project.extensions import db
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, delete
+
+
+def create_sorted_list(joblist):
+    postives = []
+    negatives = []
+    for job in joblist:
+        if job['remaining_days'] >= 0:
+            postives.append(job)
+        else:
+            negatives.append(job)
+    positive_sortedlist = sorted(postives, key=lambda d: d['remaining_days'])
+    negative_sortedlist = sorted(negatives, key=lambda d: d['remaining_days'], reverse=True)
+    resp = positive_sortedlist + negative_sortedlist
+    return resp
 
 
 def getActiveJobs():
@@ -93,3 +107,13 @@ def update_job_details(data):
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
     return "Updated Job!"
+
+
+def delete_job_service(job_id):
+    """Delete job"""
+    try:
+        Job.query.filter_by(job_id=job_id).delete()
+        db.session.commit()
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return "Deleted Job!"
