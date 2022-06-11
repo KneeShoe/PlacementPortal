@@ -72,8 +72,8 @@ def get_user_applications(identity):
 def add_job_details(data):
     """Create a new job"""
     try:
-        data['start_date'] = datetime.strptime(data['start_date'], '%d-%m-%Y')
-        data['end_date'] = datetime.strptime(data['end_date'], '%d-%m-%Y')
+        data['start_date'] = datetime.strptime(data['start_date'], '%Y-%m-%d')
+        data['end_date'] = datetime.strptime(data['end_date'], '%Y-%m-%d')
         data['job_id'] = uuid.uuid4()
         insert_job = insert(Job).values(data)
         print(insert_job)
