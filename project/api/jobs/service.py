@@ -7,15 +7,14 @@ from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
 from .model import Job, Applications
 from project.extensions import db
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 
 
 def getActiveJobs():
     """Returns jobs whose ends dates are 2 days prior to current date"""
     try:
         jobs: Job = Job.query.with_entities(Job.job_id, Job.company_name, Job.job_role, Job.job_type,
-                                            Job.end_date).filter(
-            Job.end_date + timedelta(days=2) > datetime.now()).all()
+                                            Job.end_date).all()
         return jobs
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
@@ -81,3 +80,14 @@ def add_job_details(data):
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
     return "Created Job!"
+
+
+def update_job_details(data):
+    """Update job details"""
+    try:
+        job_id = data['job_id']
+        data.pop('job_id')
+        update(Job).values(data).where(Job.job_id == job_id)
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return "Updated Job!"
