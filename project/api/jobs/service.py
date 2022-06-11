@@ -87,7 +87,9 @@ def update_job_details(data):
     try:
         job_id = data['job_id']
         data.pop('job_id')
-        update(Job).values(data).where(Job.job_id == job_id)
+        update_job = update(Job).values(data).where(Job.job_id == job_id)
+        db.session.execute(update_job)
+        db.session.commit()
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
     return "Updated Job!"
