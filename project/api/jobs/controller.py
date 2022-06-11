@@ -118,4 +118,4 @@ jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_descr
 jobs_blueprint.add_url_rule("/apply", "Apply", apply_job, methods=["POST"])
 jobs_blueprint.add_url_rule("/getApplications", "Applications", get_applications, methods=["GET"])
 jobs_blueprint.add_url_rule("/createJob", "createJob", create_job, methods=["POST"])
-jobs_blueprint.add_url_rule("/updateJob", "updateJob", update_job, mehtods=["PUT"])
+jobs_blueprint.add_url_rule("/updateJob", "updateJob", update_job, methods=["PUT"])
