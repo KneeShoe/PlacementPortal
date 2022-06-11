@@ -24,10 +24,20 @@ jobs_blueprint = Blueprint(
 def active_jobs():
     try:
         jobs = getActiveJobs()
-        resp = jobschema.dump(jobs)
-        for job in resp:
+        joblist = jobschema.dump(jobs)
+        for job in joblist:
             job['remaining_days'] = (datetime.strptime(job['end_date'], '%Y-%m-%d') - datetime.now()).days
             job.pop('end_date')
+        postives = []
+        negatives = []
+        for job in joblist:
+            if job['remaining_days'] >= 0:
+                postives.append(job)
+            else:
+                negatives.append(job)
+        positive_sortedlist = sorted(postives, key=lambda d: d['remaining_days'])
+        negative_sortedlist = sorted(negatives, key=lambda d: d['remaining_days'], reverse=True)
+        resp = positive_sortedlist + negative_sortedlist
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except BadRequest as err:
@@ -45,6 +55,11 @@ def job_description():
         details = getJobDetails(data['job_id'])
         resp = jobschema.dump(details)[0]
         resp["can_apply"] = canApply(data['job_id'], get_jwt_identity())
+        remianing_days = (datetime.strptime(resp['end_date'], '%Y-%m-%d') - datetime.now()).days
+        if remianing_days > 0:
+            resp['old_job'] = False
+        else:
+            resp['old_job'] = True
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except KeyError as err:
