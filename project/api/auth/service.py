@@ -3,7 +3,7 @@ from typing import Optional
 from flask import current_app
 
 from project.lib import BadRequest, ServerError, ph
-from ..users import authenticate, User
+from ..users import authenticate, User, Student
 from flask_jwt_extended import create_access_token, get_jti, create_refresh_token
 
 
@@ -12,12 +12,11 @@ def authenticate_user(identity: str, password: str) -> Optional[User]:
     usr = authenticate(identity=identity, password=password)
     if not usr:
         raise BadRequest("Couldn't find your account ", status=404)
-    if usr:
-        if ph.check_needs_rehash(usr.hashed_password):
-            usr.hashed_password = ph.hash(password)
+    if ph.check_needs_rehash(usr.hashed_password):
+        usr.hashed_password = ph.hash(password)
         return usr
     else:
-        raise ServerError("Unable to login", status=500)
+        raise ServerError("Incorrect Password", status=401)
 
 
 def encode_auth_token(username: str) -> str:
@@ -33,6 +32,7 @@ def encode_auth_token(username: str) -> str:
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
 
+
 def encode_refresh_token(username: str) -> str:
     """Generates an Refresh token with the constants configured
     :return token
@@ -45,3 +45,12 @@ def encode_refresh_token(username: str) -> str:
         return ref_tok
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
+
+
+def get_user_details(id):
+    """Returns user details"""
+    try:
+        student: Student = Student.query.filter((Student.user_id == id)).first()
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return student
