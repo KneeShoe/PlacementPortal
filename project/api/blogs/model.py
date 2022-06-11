@@ -11,7 +11,7 @@ class Blog(db.Model):
         server_default=text("gen_random_uuid()"),
     )
     time = db.Column(db.String(120))
-    username = db.Column(db.String(120), nullable=False)
+    username = db.Column(db.DateTime(120), nullable=False)
     title = db.Column(db.String(256), nullable=True)
     content = db.Column(db.Text, nullable=True)
 

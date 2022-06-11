@@ -5,13 +5,14 @@ from flask import current_app
 from project.lib import BadRequest, ServerError, ph
 from .model import Blog
 from ..users import authenticate, User, Student
-from flask_jwt_extended import create_access_token, get_jti, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 
 
 def get_blog_details():
     """Gets all blogs"""
-    blog: Blog = Blog.query().all()
-    return usr
+    blogs: Blog = Blog.query().all()
+    print(blogs)
+    return blogs
 
 
 def encode_auth_token(username: str) -> str:

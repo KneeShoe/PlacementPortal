@@ -16,4 +16,6 @@ def register_blueprints(app: Flask):
     app.register_blueprint(users_blueprint, url_prefix="/api/user")
     from project.api.jobs import jobs_blueprint
     app.register_blueprint(jobs_blueprint, url_prefix="/api/jobs")
+    from project.api.blogs import blog_blueprint
+    app.register_blueprint(blog_blueprint, url_prefix="/api/blogs")
     return None
