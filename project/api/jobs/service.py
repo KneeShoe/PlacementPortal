@@ -48,15 +48,15 @@ def getJobDetails(job_id):
 
 def canApply(job_id, identity):
     """Check if a user already has applied to the job"""
+    resp = True
     try:
-        resp = True
         application: Applications = Applications.query.with_entities(Applications.app_id).filter(
             Applications.s_id == identity).filter(
             Applications.job_id == job_id).one()
         if application:
             resp = False
     except Exception:
-        print("Can apply!")
+        print()
     return resp
 
 

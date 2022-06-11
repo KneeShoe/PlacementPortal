@@ -9,11 +9,10 @@ from project.lib import ServerError
 
 def update_job_status(url, job_id):
     try:
-        datafile = urllib.request.urlopen(url)
-        df = pd.read_excel(datafile)
-        for row in df[1:]:
-            update_job = update(Applications).values(status=row['status']).where(Applications.job_id == job_id,
-                                                                                 Applications.s_id == row['usn'])
+        df = pd.read_excel(url,'Sheet1')
+        for i in df.index:
+            update_job = update(Applications).values(status=df['status'][i]).where(Applications.job_id == job_id,
+                                                                                 Applications.s_id == df['usn'][i])
             db.session.execute(update_job)
         db.session.commit()
     except Exception as e:
