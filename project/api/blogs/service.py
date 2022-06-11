@@ -1,52 +1,35 @@
+import uuid
+from datetime import datetime
 from typing import Optional
 
 from flask import current_app
+from sqlalchemy import insert
 
 from project.lib import BadRequest, ServerError, ph
 from .model import Blog
+from .schema import blog_schema
 from ..users import authenticate, User, Student
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
+
+from ... import db
 
 
 def get_blog_details():
     """Gets all blogs"""
-    blogs: Blog = Blog.query().all()
-    print(blogs)
-    return blogs
+    blogs: Blog = Blog.query.all()
+    resp = blog_schema.dump(blogs)
+    return {"blogs": resp}
 
 
-def encode_auth_token(username: str) -> str:
-    """Generates an Authentication token with the constants configured
-    :return token
-    """
+def create_new_blog(data, identity):
+    """Create new blogs"""
     try:
-        acc_tok = create_access_token(
-            identity=username,
-            expires_delta=current_app.config.get("JWT_ACCESS_TOKEN_EXPIRES"),
-        )
-        return acc_tok
+        data['blog_id'] = uuid.uuid4()
+        data['time'] = datetime.now()
+        data['username'] = identity
+        insert_blog = insert(Blog).values(data)
+        db.session.execute(insert_blog)
+        db.session.commit()
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
-
-
-def encode_refresh_token(username: str) -> str:
-    """Generates an Refresh token with the constants configured
-    :return token
-    """
-    try:
-        ref_tok = create_refresh_token(
-            identity=username,
-            expires_delta=current_app.config.get("JWT_REFRESH_TOKEN_EXPIRES"),
-        )
-        return ref_tok
-    except Exception:
-        raise ServerError("It is not You, It is me", status=500)
-
-
-def get_user_details(id):
-    """Returns user details"""
-    try:
-        student: Student = Student.query.filter((Student.user_id == id)).first()
-    except Exception:
-        raise ServerError("It is not You, It is me", status=500)
-    return student
+    return "Created Job!"

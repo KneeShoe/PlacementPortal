@@ -1,11 +1,13 @@
 from marshmallow import Schema, fields
 
 
-class VerifyUser(Schema):
+class BlogSchema(Schema):
     """Schema for the end user verification"""
 
-    username = fields.String(required=True)
-    hashed_password = fields.String(required=True, data_key="password")
+    time = fields.String()
+    username = fields.String()
+    title = fields.String()
+    content = fields.String()
 
 
-verify_user_schema = VerifyUser()
+blog_schema = BlogSchema(many=True)

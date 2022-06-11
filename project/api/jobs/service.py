@@ -76,7 +76,6 @@ def add_job_details(data):
         data['end_date'] = datetime.strptime(data['end_date'], '%Y-%m-%d')
         data['job_id'] = uuid.uuid4()
         insert_job = insert(Job).values(data)
-        print(insert_job)
         db.session.execute(insert_job)
         db.session.commit()
     except Exception:
