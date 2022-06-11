@@ -27,14 +27,21 @@ def login_user() -> Tuple[Dict[str, str], int]:
     try:
         u = verify_user_schema.load(request.get_json(force=True))
         auth_user = authenticate_user(identity=u["username"], password=u["hashed_password"])
-        user = get_user_details(auth_user.user_id)
         resp = {
             "access_token": encode_auth_token(auth_user.username),
             "refresh_token": encode_refresh_token(auth_user.username),
             "role": auth_user.user_type,
-            "dept": user.dept,
-            "sem": user.sem
+            "username": auth_user.username
         }
+        if auth_user.user_type == "student":
+            user = get_user_details(auth_user.user_id)
+            resp = {
+                "access_token": encode_auth_token(auth_user.username),
+                "refresh_token": encode_refresh_token(auth_user.username),
+                "role": auth_user.user_type,
+                "dept": user.dept,
+                "username": auth_user.username
+            }
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except BadRequest as err:

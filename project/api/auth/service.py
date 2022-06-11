@@ -11,7 +11,7 @@ def authenticate_user(identity: str, password: str) -> Optional[User]:
     """Authenticates the use"""
     usr = authenticate(identity=identity, password=password)
     if not usr:
-        raise BadRequest("Couldn't find your account ", status=404)
+        raise BadRequest("Couldn't find your account ", status=400)
     if ph.check_needs_rehash(usr.hashed_password):
         usr.hashed_password = ph.hash(password)
     return usr
