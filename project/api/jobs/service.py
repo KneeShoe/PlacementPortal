@@ -41,9 +41,9 @@ def canApply(job_id, identity):
             Applications.job_id == job_id).one()
         if application:
             resp = False
-        return resp
     except Exception:
-        raise ServerError("It is not You, It is me", status=500)
+        print("Can apply!")
+    return resp
 
 
 def create_application(resume, job_id, s_id):
