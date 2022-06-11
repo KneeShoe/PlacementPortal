@@ -4,7 +4,7 @@ from typing import Dict, Tuple
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, get_jwt, jwt_required
 
-# from automation_scripts.add_users import update_job_status
+from automation_scripts import update_job_status
 from .service import getActiveJobs, getJobDetails, create_application, get_user_applications, canApply, add_job_details, \
     update_job_details, create_sorted_list, delete_job_service
 from .schema import jobschema, jobdescriptionschema, applicationschema
@@ -116,7 +116,7 @@ def update_job():
     """Update job details"""
     try:
         data = request.get_json(force=True)
-        update_job_details(data)
+        resp = update_job_details(data)
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except KeyError as err:
@@ -124,14 +124,14 @@ def update_job():
     except Exception as e:
         logging.exception(msg=e)
         raise ServerError("It ain't you, it is me", status=500)
-    return "Job Updated", 200
+    return resp, 200
 
 
 def update_status():
     """Update status of job applicant"""
     try:
         data = request.get_json(force=True)
-        # update_job_status(data['url'], data['job_id'])
+        resp = update_job_status(data['url'], data['job_id'])
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except KeyError as err:
@@ -139,7 +139,7 @@ def update_status():
     except Exception as e:
         logging.exception(msg=e)
         raise ServerError("It ain't you, it is me", status=500)
-    return "Job Status Updated", 200
+    return resp, 200
 
 
 def delete_job():
@@ -164,4 +164,4 @@ jobs_blueprint.add_url_rule("/getApplications", "Applications", get_applications
 jobs_blueprint.add_url_rule("/createJob", "createJob", create_job, methods=["POST"])
 jobs_blueprint.add_url_rule("/updateJob", "updateJob", update_job, methods=["PUT"])
 jobs_blueprint.add_url_rule("/updateJobStatus", "updateJobStatus", update_status, methods=["POST"])
-jobs_blueprint.add_url_rule("/deleteJob", "deleteJob", delete_job, methods=["DELETE"])
+jobs_blueprint.add_url_rule("/deleteJob", "deleteJob", delete_job, methods=["POST"])
