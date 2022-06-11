@@ -22,7 +22,6 @@ class Job(db.Model):
     ctc = db.Column(db.INT, nullable=True)
     location = db.Column(db.String(256), nullable=True)
     comp_address = db.Column(db.String(256), nullable=True)
-    internship = db.Column(db.Boolean, nullable=True)
     job_desc = db.Column(db.String(256), nullable=True)
     placed_slab = db.Column(db.INT, nullable=True)
     start_date = db.Column(db.Date, nullable=False)

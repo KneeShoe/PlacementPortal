@@ -10,7 +10,6 @@ class JobSchema(Schema):
     ctc = fields.Integer()
     location = fields.String()
     comp_address = fields.String()
-    internship = fields.Boolean()
     job_desc = fields.String()
     placed_slab = fields.Integer()
     start_date = fields.Date()

@@ -1,4 +1,5 @@
 import json
+import uuid
 from typing import Optional
 
 from flask import current_app
@@ -6,7 +7,7 @@ from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
 from .model import Job, Applications
 from project.extensions import db
-from sqlalchemy import select
+from sqlalchemy import select, insert
 
 
 def getActiveJobs():
@@ -71,11 +72,13 @@ def get_user_applications(identity):
 def add_job_details(data):
     """Create a new job"""
     try:
-        vals = {}
-        for key, value in data:
-            vals[key] = value
-        ins = Job.insert().values(vals)
-        db.engine.execute(ins)
+        data['start_date'] = datetime.strptime(data['start_date'], '%d-%m-%Y')
+        data['end_date'] = datetime.strptime(data['end_date'], '%d-%m-%Y')
+        data['job_id'] = uuid.uuid4()
+        insert_job = insert(Job).values(data)
+        print(insert_job)
+        db.session.execute(insert_job)
+        db.session.commit()
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
-    return data
+    return "Created Job!"
