@@ -14,9 +14,7 @@ def authenticate_user(identity: str, password: str) -> Optional[User]:
         raise BadRequest("Couldn't find your account ", status=404)
     if ph.check_needs_rehash(usr.hashed_password):
         usr.hashed_password = ph.hash(password)
-        return usr
-    else:
-        raise ServerError("Incorrect Password", status=401)
+    return usr
 
 
 def encode_auth_token(username: str) -> str:
