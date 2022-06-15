@@ -6,7 +6,7 @@ from flask_jwt_extended import get_jwt_identity, get_jwt, jwt_required
 
 from automation_scripts import update_job_status
 from .service import getActiveJobs, getJobDetails, create_application, get_user_applications, canApply, add_job_details, \
-    update_job_details, create_sorted_list, delete_job_service
+    update_job_details, create_sorted_list, delete_job_service, get_statistics_details
 from .schema import jobschema, jobdescriptionschema, applicationschema
 from datetime import datetime
 
@@ -131,7 +131,7 @@ def update_status():
     """Update status of job applicant"""
     try:
         data = request.get_json(force=True)
-        resp = update_job_status(data['url'], data['job_id'])
+        resp = update_job_status(data['url'], data['job_id'], data['ctc'], data['company_name'])
     except ServerError as err:
         raise ServerError(message=err.message, status=err.status)
     except KeyError as err:
@@ -156,7 +156,21 @@ def delete_job():
         raise ServerError("It ain't you, it is me", status=500)
     return "Job Deleted", 200
 
+def get_statistics():
+    """Return statistics of placements"""
+    try:
+        resp = get_statistics_details()
+    except ServerError as err:
+        raise ServerError(message=err.message, status=err.status)
+    except KeyError as err:
+        raise BadRequest(message=err.message, status=err.status)
+    except Exception as e:
+        logging.exception(msg=e)
+        raise ServerError("It ain't you, it is me", status=500)
+    return resp, 200
 
+
+jobs_blueprint.add_url_rule("/statistics", "statistics", get_statistics, methods=["GET"])
 jobs_blueprint.add_url_rule("/getActiveJobs", "getActiveJobs", active_jobs, methods=["GET"])
 jobs_blueprint.add_url_rule("/getJobDescription", "getJobDescription", job_description, methods=["POST"])
 jobs_blueprint.add_url_rule("/apply", "Apply", apply_job, methods=["POST"])

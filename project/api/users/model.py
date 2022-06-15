@@ -26,6 +26,10 @@ class Student(db.Model):
         db.ForeignKey("users.user_id"),
         primary_key=True,
     )
+    s_id = db.Column(
+        db.String,
+        db.ForeignKey("users.username"),
+    )
     dept = db.Column(db.String(120), nullable=False)
     dob = db.Column(db.Date, nullable=False)
     resume1 = db.Column(db.String(256), nullable=True)
@@ -37,6 +41,7 @@ class Student(db.Model):
     slab1 = db.Column(db.String(256), nullable=True)
     slab2 = db.Column(db.String(256), nullable=True)
     slab3 = db.Column(db.String(256), nullable=True)
+    batch = db.Column(db.String(256), nullable=True)
 
     @classmethod
     def get_student_details(cls, usn=None):

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from project.lib import BadRequest, ServerError, ph
 from .model import Job, Applications
 from project.extensions import db
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, text
 
 
 def create_sorted_list(joblist):
@@ -117,3 +117,54 @@ def delete_job_service(job_id):
     except Exception:
         raise ServerError("It is not You, It is me", status=500)
     return "Deleted Job!"
+
+
+def parse_response(student_details):
+    resp = {}
+    students = []
+    offered = []
+    dept = {}
+    name=[]
+    val=[]
+    slabs = [0, 0, 0]
+    for application in student_details:
+        if application['s_id'] not in students:
+            students.append(application['s_id'])
+        if application['status'] == 'accepted':
+            if application['s_id'] not in offered:
+                offered.append(application['s_id'])
+                if application['dept'] not in dept:
+                    dept[application['dept']] = 1
+                else:
+                    dept[application['dept']] = dept[application['dept']] + 1
+                if application['ctc'] < 699999:
+                    slabs[0] = slabs[0] + 1
+                elif application['ctc'] < 2000000:
+                    slabs[2] = slabs[2] + 1
+                else:
+                    slabs[1] = slabs[1] + 1
+    print('abc')
+    for k,v in dept.items():
+        name.append(v)
+        val.append(k)
+    resp['PvU'] = {'data': [len(offered), len(students)-len(offered)], 'label': ['Placed', 'Unplaced']}
+    resp['slabs'] = {'data': slabs, 'label': ['Super Dream Offer', 'Dream Offer', 'Offer']}
+    resp['depts'] = {'data': val, 'label': name}
+    return resp
+
+
+def get_statistics_details():
+    """Return statistics information"""
+    try:
+        stats = db.session.execute(
+            """
+                    select * from applications a inner join student s on s.s_id = a.s_id inner join jobs j on j.job_id = a.job_id
+            """
+        )
+        students_details = []
+        for row in stats:
+            students_details.append(dict(row))
+        resp = parse_response(students_details)
+    except Exception:
+        raise ServerError("It is not You, It is me", status=500)
+    return resp
