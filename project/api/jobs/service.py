@@ -147,9 +147,10 @@ def parse_response(student_details):
     for k,v in dept.items():
         name.append(v)
         val.append(k)
-    resp['PvU'] = {'data': [len(offered), len(students)-len(offered)], 'label': ['Placed', 'Unplaced']}
-    resp['slabs'] = {'data': slabs, 'label': ['Super Dream Offer', 'Dream Offer', 'Offer']}
-    resp['depts'] = {'data': val, 'label': name}
+    resp['stats']=[]
+    resp['stats'].append({'chart_type':'PvU','data': [len(offered), len(students)-len(offered)], 'label': ['Placed', 'Unplaced']})
+    resp['stats'].append({'chart_type':'slabs','data': slabs, 'label': ['Super Dream Offer', 'Dream Offer', 'Offer']})
+    resp['stats'].append({'chart_type':'depts','data': val, 'label': name})
     return resp
 
 
