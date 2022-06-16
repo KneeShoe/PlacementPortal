@@ -37,7 +37,7 @@ def create_users():
         for i in df.index:
             password = ph.hash(df['first_name'][i] + df['dob'][i])
             user_id = uuid.uuid4()
-            batch = '20' + df['username'][i][3:4]
+            batch = '20' + df['username'][i][3:5]
             add_user = insert(User).values(user_id=user_id, first_name=df['first_name'][i],
                                            last_name=df['last_name'][i],
                                            username=df['username'][i], hashed_password=password, user_type='student',
