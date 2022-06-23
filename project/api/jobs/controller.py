@@ -51,7 +51,7 @@ def job_description():
         resp = jobschema.dump(details)[0]
         resp["can_apply"] = canApply(data['job_id'], get_jwt_identity())
         remianing_days = (datetime.strptime(resp['end_date'], '%Y-%m-%d') - datetime.now()).days
-        if remianing_days > 0:
+        if remianing_days >= 0:
             resp['old_job'] = False
         else:
             resp['old_job'] = True
